@@ -6,8 +6,9 @@ class CPU:
     """Main CPU class."""
 
     def __init__(self):
-        self.ram = [0]*256
-        self.register = [0]*8
+        """Construct a new CPU."""
+        self.ram = [0] * 8
+        self.register = [0] * 8
         self.pc = 0
 
     def load(self):
@@ -37,7 +38,8 @@ class CPU:
 
         if op == "ADD":
             self.reg[reg_a] += self.reg[reg_b]
-        #elif op == "SUB": etc
+        elif op == "SUB":
+            self.reg[reg_a] -= self.reg[reg_b]
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -60,38 +62,30 @@ class CPU:
             print(" %02X" % self.reg[i], end='')
 
         print()
-    # MAR is where, MDR is what is being wrote there
-    def ram_read(self, MAR):
-        return self.memory[MAR]
-
-    def ram_write(self, MDR, MAR):
-        self.memory[MAR] = MDR
 
     def run(self):
+        """Run the CPU."""
         running = True
 
-        LDI = 0b10000010
-        PRN = 0b01000111
-        HLT = 0b00000001
-
         while running:
-            IR = self.ram_read(self.pc)
-            operand_a = self.ram_read(self.pc + 1)
-            operand_b = self.ram_read(self.pc + 1)
-
-            if IR == LDI:
-                self.register[operand_a] = operand_b
+            #LDI
+            if self.ram[self.pc] == 0b10000010:
+                self.register[int(str(self.ram[self.pc + 1]), 2)] = self.ram[self.pc + 2]
                 self.pc += 3
-            
-            elif IR == PRN:
-                print(self.register[operand_a])
-                self.pc += 2
-            
-            elif IR == HLT:
-                running = False
-                self.pc += 1
 
-            else:
-                self.pc += 1
-                print(f"{IR} - Invalid Command")
-                sys.exit()
+            #PRN
+            elif self.ram[self.pc] == 0b01000111:
+                print(self.register[int(str(self.ram[self.pc + 1]), 2)])
+                self.pc += 2
+
+            #HLT
+            elif self.ram[self.pc] == 0b00000001:
+                self.pc = 0
+                running = False
+
+
+    def ram_read(self, address):
+        return self.ram[int(str(address), 2)]
+
+    def ram_write(self, address, value):
+        self.ram[int(str(address), 2)] = value

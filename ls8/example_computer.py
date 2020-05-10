@@ -1,6 +1,6 @@
 import sys
 
-# op codes (operations codes)
+# op codes, this is what you would give a programmer as "documentation"
 PRINT_JUSTIN   = 1
 HALT           = 2
 PRINT_NUM      = 3
@@ -8,106 +8,96 @@ SAVE           = 4
 PRINT_REGISTER = 5
 ADD            = 6
 
-print_justin_program = [
-    PRINT_JUSTIN,
-    PRINT_JUSTIN,
-    PRINT_JUSTIN,
-    PRINT_JUSTIN,
-    HALT,
-]
 
-print_some_nums = [
-    PRINT_NUM,
-    12,
-    PRINT_NUM,
-    15,
-    PRINT_NUM,
-    37,
-    PRINT_JUSTIN,
-    HALT,
-]
-
-save_num_to_reg = [
-    SAVE, # SAVE, VAL, REG_NUM
-    65,
-    2,
-    PRINT_REGISTER,
-    HALT,
-]
-
-add_numbers = [
-    SAVE, # SAVE number 12 to reg 1
-    12,
-    1,
-    SAVE, # SAVE number 12 to reg 2
-    45,
-    2,
-    ADD, # Reg1 += Reg2 (we add the two values in the two reg and store the result in the first register)
-    1,
-    2,
-    PRINT_REGISTER,
-    1,
-    HALT,
-]
-
-memory = add_numbers
+# this is where we "initialize the memory"
+memory = [0] * 256 
 
 
 
-# lets write a basic computer
-
+# ALL THE CODE BELOW IS THE "COMPUTER"
 running = True
 pc = 0
 registers = [0] * 8
 
+# Read from file, and load into memory
+# read the filename from command line arguments
+# open the file, and load each line into memory
+# lets try not to crash
+def load_program_into_memory():
+    address = 0
+    # get the filename from arguments here
+    print(sys.argv)
+    if len(sys.argv) != 2:
+        print("Need proper file name passed")
+        sys.exit(1)
 
+    filename = sys.argv[1]
+    with open(filename) as f:
+        for line in f:
+            # print(line)
+            if line == '':
+                continue
+            comment_split = line.split('#')
+            # print(comment_split) # [everything before #, everything after #]
+
+            num = comment_split[0].strip()
+
+            memory[address] = int(num)
+            address += 1
+
+
+
+load_program_into_memory()
 while running:
-    
-    # lets do some things
-    command = memory[pc] 
+    # lets receive some instructions, and execute them
+    command = memory[pc]
 
-    # lets receive some intructions and execute them
-    # if command if PRINT_JUSTIN
+    # if command is PRINT_JUSTIN
     if command == PRINT_JUSTIN:
-        print('Justin')
+        # print out JUSTIN's name
+        print('JUSTIN!')
         pc += 1
-        # print out Justin's name
-    
+
     # if command is HALT
     elif command == HALT:
-        # shutdown
         running = False
         pc += 1
+        # shutdown
+
     elif command == PRINT_NUM:
-        # look at next line for number
+        # look at the next line in memory
+        # print the number thats in that spot
         num = memory[pc + 1]
-         # print that number
         print(num)
         pc += 2
-    
+
     elif command == SAVE:
+        # we expect to see two numbers after the instruction
+        # number to save, and register location
         num_to_save = memory[pc + 1]
         register = memory[pc + 2]
         registers[register] = num_to_save
         pc += 3
-
+    
     elif command == PRINT_REGISTER:
+        # we expect to see one number after the instruction
+        # number of register location
         register = memory[pc + 1]
-        print(registers[registers])
+        print(registers[register])
         pc += 2
     
     elif command == ADD:
+        # we expect to see two numbers after the instruction
+        # both register locations
+        # we will save the result into the first register given to us
         register1 = memory[pc + 1]
         register2 = memory[pc + 2]
         val1 = registers[register1]
         val2 = registers[register2]
         registers[register1] = val1 + val2
         pc += 3
-
     else:
-    # if command is non reconizable
-        print(f"Unknown Instructions: (command)")
+    # if command is non recognizable
+        print(f"Unknown instruction {command}")
         sys.exit(1)
         # lets crash :(
-
-    

@@ -8,13 +8,13 @@
 
 ### Day 1: Get `print8.ls8` running
 
-- [ ] Inventory what is here
-- [ ] Implement the `CPU` constructor
-- [ ] Add RAM functions `ram_read()` and `ram_write()`
-- [ ] Implement the core of `run()`
-- [ ] Implement the `HLT` instruction handler
-- [ ] Add the `LDI` instruction
-- [ ] Add the `PRN` instruction
+- [1] Inventory what is here
+- [1] Implement the `CPU` constructor
+- [1] Add RAM functions `ram_read()` and `ram_write()`
+- [1] Implement the core of `run()`
+- [1] Implement the `HLT` instruction handler
+- [1] Add the `LDI` instruction
+- [1] Add the `PRN` instruction
 
 ### Day 2: Add the ability to load files dynamically, get `mult.ls8` running
 
